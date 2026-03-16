@@ -1,0 +1,70 @@
+import { isToday, isTomorrow, format } from 'date-fns';
+
+export type Lesson = {
+  id: string;
+  title: string;
+  videoUrl?: string;
+  liveStart?: string;
+  liveEnd?: string;
+  status?: 'active' | 'coming-soon';
+  englishGuideUrl?: string;
+  hindiGuideUrl?: string;
+  dayOffset: number;
+};
+
+export const MOCK_LESSONS: Lesson[] = [
+  {
+    id: 'lesson-1',
+    title: 'Mushroom Training Online Course',
+    videoUrl: 'https://drive.google.com/file/d/1t4CVmAtS6SVOxewXhq-zY69BJuE0m30Y/preview',
+    englishGuideUrl: 'https://docs.google.com/document/d/1SQuzj_dGlLClISSywYx7CfAGC6-jsOuPLPS2VBi04-k/edit',
+    hindiGuideUrl: 'https://docs.google.com/document/d/1-B86jDfaHPGMVXgnB4pUbITnI0B9mgy9gaCYEzLTGl4/edit',
+    status: 'active',
+    dayOffset: 0
+  },
+  {
+    id: 'lesson-2',
+    title: 'Button Mushroom Full Cultivation Process',
+    videoUrl: 'https://drive.google.com/file/d/1lSPWvPU33n9eRRzjS2kER07cZYtzetID/preview',
+    englishGuideUrl: 'https://docs.google.com/document/d/10O9X2Dz7rr3tiFLcsNxEjhBJ4c_voBi35CB4iaVxcNA/edit',
+    hindiGuideUrl: 'https://docs.google.com/document/d/1-deLiorpAHZ0K4VKU0GEo7z0-SG0KzO94Dym9WQlnfc/edit',
+    status: 'active',
+    dayOffset: 1
+  },
+  {
+    id: 'lesson-3',
+    title: 'Oyster Mushroom Full Cultivation Process',
+    videoUrl: 'https://drive.google.com/file/d/1mUEaQX_m5Cn0rhiE2px5Yr894XZ40gsr/preview',
+    englishGuideUrl: 'https://docs.google.com/document/d/10zKIme_lLJIeEz8rF3kTpk3U1SpXTjaPCAKF6gyRlgg/edit',
+    hindiGuideUrl: 'https://docs.google.com/document/d/111ejEhBsZKFH66f97Ke2CliFIxecScYZiyD-gJYdCsE/edit',
+    status: 'active',
+    dayOffset: 2
+  },
+  {
+    id: 'lesson-4',
+    title: 'Milky Mushroom Farming Guide',
+    status: 'coming-soon',
+    dayOffset: 3
+  }
+];
+
+export const getLessonUnlockTime = (registeredAt: number, dayOffset: number) => {
+  const regDate = new Date(registeredAt);
+  const unlockDate = new Date(regDate);
+  unlockDate.setHours(16, 0, 0, 0); // 4:00 PM
+
+  // If registered after 4 PM, base unlock starts tomorrow
+  if (regDate.getHours() >= 16) {
+    unlockDate.setDate(unlockDate.getDate() + 1);
+  }
+
+  // Add the day offset for this lesson sequence
+  unlockDate.setDate(unlockDate.getDate() + dayOffset);
+  return unlockDate;
+};
+
+export const getUnlockText = (unlockTime: Date) => {
+  if (isToday(unlockTime)) return "Unlocks at 4:00 PM";
+  if (isTomorrow(unlockTime)) return "Unlocks Tomorrow 4:00 PM";
+  return `Unlocks on ${format(unlockTime, 'MMM d')} at 4:00 PM`;
+};

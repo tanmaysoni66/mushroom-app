@@ -1,0 +1,10 @@
+import { Navigate, Outlet } from 'react-router';
+import { useAppStore } from '../store';
+
+export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAppStore();
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
